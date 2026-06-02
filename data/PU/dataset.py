@@ -3,7 +3,7 @@ import scipy.io as sio
 import matplotlib.pyplot as plt
 import numpy as np
 
-def segment_signal(signal, window_length=4096, overlap_ratio=0.25):
+def segment_signal(signal, window_length=4096, overlap_ratio=0.0):
     step = int(window_length * (1 - overlap_ratio))
     segments = []
     for start in range(0, len(signal) - window_length + 1 , step):

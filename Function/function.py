@@ -15,7 +15,7 @@ def seed_func():
 
 #-------------Spectrogram--------------------------------#
 
-def to_spectrum(data):
+def to_spectrum_CWRU(data):
     spectrograms = []
 
     for i in range(data.shape[0]):
@@ -31,6 +31,8 @@ def to_spectrum(data):
     data = torch.from_numpy(data).unsqueeze(dim = 1)
 
     return data
+
+
 
 #-------------For Fewshot Learning-----------------------#
 

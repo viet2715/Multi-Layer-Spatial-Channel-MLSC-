@@ -45,10 +45,3 @@ class FewshotDataset(Dataset):
         support_targets = torch.cat(support_targets, dim=0)
 
         return query_images, query_targets, support_images, support_targets
-
-
-
-'''
-  way_num = num_classes, shot_num = number samples per class
-
-'''
