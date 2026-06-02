@@ -119,9 +119,9 @@ if args.dataset == 'PDB':
     _, x_train_limited,_, y_train_limited = train_test_split(x_train, y_train, test_size=test_size, random_state=42, stratify=y_train)
     print('Data train for limited case shape:', x_train_limited.shape)
     print('Label train for limited case shape', y_train_limited.shape)
-    train_dataset_PDB = FewshotDataset(x_train_limited, y_train_limited, episode_num=args.episode_num_train, way_num=args.way_num_PDB, shot_num=1, query_num=1)
+    train_dataset_PDB = FewshotDataset(x_train_limited, y_train_limited, episode_num=args.episode_num_train, way_num=args.way_num_PDB, shot_num=5, query_num=1)
     train_dataloader_PDB = DataLoader(train_dataset_PDB, batch_size=args.batch_size, shuffle=True)
-    test_dataset_PDB = FewshotDataset(x_test, y_test, episode_num=args.episode_num_test, way_num=args.way_num_PDB, shot_num=1, query_num=1)
+    test_dataset_PDB = FewshotDataset(x_test, y_test, episode_num=args.episode_num_test, way_num=args.way_num_PDB, shot_num=5, query_num=1)
     test_dataloader_PDB = DataLoader(test_dataset_PDB, batch_size=args.batch_size, shuffle=False)
 
 
