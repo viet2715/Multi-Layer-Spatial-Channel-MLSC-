@@ -9,12 +9,13 @@ import Function.function as function
 import time
 from tqdm import tqdm
 import os
-from Function.function import ContrastiveLoss, seed_func, convert_for_5shots, cal_accuracy_fewshot_ensemble_5shot
+from Function.function import seed_func, cal_accuracy_fewshot_5shot, convert_for_5shots
+from Function.loss import ContrastiveLoss
 from data.CWRU.dataset import CWRU
 from Dataloader.dataloader import FewshotDataset
 from torch.utils.data import DataLoader
 from model.Proposed_model import Model
-import argparse
+from sklearn.metrics import confusion_matrix
 import torch.nn as nn
 import numpy as np
 import librosa
@@ -30,7 +31,7 @@ parser.add_argument('--training_samples_CWRU', type=int, default=60, help='Numbe
 parser.add_argument('--training_samples_PDB', type=int, default=195, help='Number of training samples for PDB')
 parser.add_argument('--model_name', type=str, help='Model name')
 parser.add_argument('--episode_num_train', type=int, default=100, help='Number of training episodes')
-parser.add_argument('--episode_num_test', type=int, default=75, help='Number of testing episodes')
+parser.add_argument('--episode_num_test', type=int, default=150, help='Number of testing episodes')
 parser.add_argument('--way_num_CWRU', type=int, default=10, help='Number of classes for CWRU')
 parser.add_argument('--noise_DB', type=str, default=None, help='Noise database')
 parser.add_argument('--way_num_PDB', type=int, default=13, help='Number of classes for PDB')
@@ -47,6 +48,8 @@ parser.add_argument('--loss2', default=nn.CrossEntropyLoss())
 args = parser.parse_args()
 
 print(args)
+
+
 #---------------------------------------------------Load dataset-----------------------------------------------------------------------------------------:
 if args.dataset == 'CWRU':
     window_size = 2048
@@ -68,19 +71,21 @@ if args.dataset == 'CWRU':
         noisy_test_data = data.X_test_noisy.reshape([750,4096])
 
         if args.spectrum != None:
-            train_data_CWRU = function.to_spectrum(train_data_CWRU)
-            test_data_CWRU = function.to_spectrum(noisy_test_data)
+            train_data_CWRU = function.to_spectrum_CWRU(train_data_CWRU)
+            test_data_CWRU = function.to_spectrum_CWRU(noisy_test_data)
         else:
             train_data_CWRU = train_data_CWRU.reshape(train_data_CWRU.shape[0], 1, 64, 64)
             test_data_CWRU = test_data_CWRU.reshape(test_data_CWRU.shape[0], 1, 64, 64)
 
     else:
         if args.spectrum != None:
-            train_data_CWRU = function.to_spectrum(train_data_CWRU)
-            test_data_CWRU = function.to_spectrum(test_data_CWRU)
+            train_data_CWRU = function.to_spectrum_CWRU(train_data_CWRU)
+            test_data_CWRU = function.to_spectrum_CWRU(test_data_CWRU)
         else:
             train_data_CWRU = train_data_CWRU.reshape(train_data_CWRU.shape[0], 1, 64, 64)
             test_data_CWRU = test_data_CWRU.reshape(test_data_CWRU.shape[0], 1, 64, 64)
+
+
 
     print('Shape of CWRU train data:',train_data_CWRU.shape)
     print('Shape of CWRU test data:',test_data_CWRU.shape)
@@ -179,7 +184,7 @@ def train_and_test_model(net,
             total_loss = running_loss / num_batches
             full_loss.append(total_loss)
             print('------------Testing on the test set-------------')
-            acc = cal_accuracy_fewshot_ensemble_5shot(test_loader, net, device)
+            acc = cal_accuracy_fewshot_5shot(test_loader, net, device)
             full_acc.append(acc)
             print(f'Accuracy on the test set: {acc:.4f}')
             if acc > pred_acc:
