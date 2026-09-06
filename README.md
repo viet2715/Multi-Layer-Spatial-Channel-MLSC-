@@ -15,7 +15,7 @@ We present a novel end-to-end few-shot learning framework, called Multi-Layer Sp
 
 ### Cross Attention Feature Extraction (CAFE)
 
-![CAFE](Images/CAFE.jpgCAFE.jpg)
+![CAFE](Images/CAFE.jpg)
 ### Hierarchical Mamba-Embedded Transformer (HMET)
 
 ![HMET](Images/Mamba.jpg)
